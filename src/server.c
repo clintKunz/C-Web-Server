@@ -54,10 +54,14 @@ int send_response(int fd, char *header, char *content_type, void *body, int cont
     char response[max_response_size];
 
     // Build HTTP response and store it in response
+    int response_length = strlen(header) + strlen(body);
 
-    ///////////////////
-    // IMPLEMENT ME! //
-    ///////////////////
+    sprintf(response, "%s\n"
+                    "Content-Type: %s\n"
+                    "Content-Length: %d\n"
+                    "\n"
+                    "%s",
+                    header, content_type, content_length, body);
 
     // Send it all!
     int rv = send(fd, response, response_length, 0);
@@ -204,6 +208,9 @@ int main(void)
             perror("accept");
             continue;
         }
+        
+        // test send_response
+        resp_404(newfd);
 
         // Print out a message that we got the connection
         inet_ntop(their_addr.ss_family,
@@ -213,6 +220,7 @@ int main(void)
         
         // newfd is a new socket descriptor for the new connection.
         // listenfd is still listening for new connections.
+
 
         handle_http_request(newfd, cache);
 
