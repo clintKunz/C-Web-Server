@@ -59,12 +59,18 @@ int send_response(int fd, char *header, char *content_type, void *body, int cont
                     "Content-Type: %s\n"
                     "Content-Length: %d\n"
                     "Connnection: close\n"
-                    "\n"
-                    "%s",
-                    header, content_type, content_length, body);
+                    "\n",
+                    header, content_type, content_length);
 
-    // Send it all!
+    // Send header
     int rv = send(fd, response, strlen(response), 0);
+    
+    if (rv < 0) {
+            perror("send");
+        }
+
+    // Send body
+    rv = send(fd, body, content_length, 0);
 
     if (rv < 0) {
         perror("send");
