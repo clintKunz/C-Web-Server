@@ -157,20 +157,33 @@ void handle_http_request(int fd, struct cache *cache)
         return;
     }
 
-
-    ///////////////////
-    // IMPLEMENT ME! //
-    ///////////////////
-
     // Read the first two components of the first line of the request 
+    char method[200];
+    char path[8192];
+
+    sscanf(request, "%s %s", method, path);
+
+    printf("method: %s\n", method);
+    printf("path: %s\n", path);
  
     // If GET, handle the get endpoints
+    if (strcmp(method, "GET") == 0) {
+        //    Check if it's /d20 and handle that special case
+        if (strcmp(path, "/d20") == 0) {
+            printf("Special case\n");
+            get_d20(fd);
+        } else {
+            //    Otherwise serve the requested file by calling get_file()
+            printf("get file\n");
+            get_file(fd, cache, path);
+        }
+    } else if (strcmp(method, "POST") == 0) {
+        // (Stretch) If POST, handle the post request
+        printf("handle POST\n");
+    } else {
+        resp_404(fd);
+    }
 
-    //    Check if it's /d20 and handle that special case
-    //    Otherwise serve the requested file by calling get_file()
-
-
-    // (Stretch) If POST, handle the post request
 }
 
 /**
@@ -208,9 +221,6 @@ int main(void)
             perror("accept");
             continue;
         }
-
-        // test send_response
-        resp_404(newfd);
 
         // Print out a message that we got the connection
         inet_ntop(their_addr.ss_family,
