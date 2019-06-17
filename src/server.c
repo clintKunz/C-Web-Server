@@ -54,17 +54,17 @@ int send_response(int fd, char *header, char *content_type, void *body, int cont
     char response[max_response_size];
 
     // Build HTTP response and store it in response
-    int response_length = strlen(header) + strlen(body);
 
     sprintf(response, "%s\n"
                     "Content-Type: %s\n"
                     "Content-Length: %d\n"
+                    "Connnection: close\n"
                     "\n"
                     "%s",
                     header, content_type, content_length, body);
 
     // Send it all!
-    int rv = send(fd, response, response_length, 0);
+    int rv = send(fd, response, strlen(response), 0);
 
     if (rv < 0) {
         perror("send");
@@ -208,7 +208,7 @@ int main(void)
             perror("accept");
             continue;
         }
-        
+
         // test send_response
         resp_404(newfd);
 
