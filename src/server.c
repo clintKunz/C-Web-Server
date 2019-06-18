@@ -135,14 +135,16 @@ void get_file(int fd, struct cache *cache, char *request_path)
 
     if (filedata == NULL) {
         fprintf(stderr, "cannot find file\n");
-        exit(3);
+        resp_404(fd);
+        //exit(3);
+    } else {
+        mime_type = mime_type_get(filepath);
+
+        send_response(fd, "HTTP/1.1 200 OK", mime_type, filedata->data, filedata->size);
+
+        file_free(filedata);
     }
 
-    mime_type = mime_type_get(filepath);
-
-    send_response(fd, "HTTP/1.1 200 OK", mime_type, filedata->data, filedata->size);
-
-    file_free(filedata);
 }
 
 /**
