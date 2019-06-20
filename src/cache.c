@@ -10,10 +10,17 @@
 struct cache_entry *alloc_entry(char *path, char *content_type, void *content, int content_length)
 {
     struct cache_entry *ce = malloc(sizeof(struct cache_entry));
-    ce->content = content;
-    ce->path = strdup(path);
-    ce->content_type = strdup(content_type);
+    ce->path = malloc(strlen(path) + 1);
+    strcpy(ce->path, path);
+
+    ce->content_type = malloc(strlen(content_type) + 1);
+    strcpy(ce->content_type, content_type);
+
+    ce->content = malloc(content_length);
+    memcpy(ce->content, content, content_length);
+
     ce->content_length = content_length;
+    ce->prev = ce->next = NULL;
 
     return ce; 
 }
